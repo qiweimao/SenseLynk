@@ -1,70 +1,47 @@
-# Getting Started with Create React App
+# SenseLynk UI for ESP32
+![Alt Text](docs/images/Dashboard.png)
+Welcome to the React App for IoT Device Management!
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This web application is designed to be hosted on an AWS machine connected to IoT devices, such as Gateways and LoRaWAN Nodes. Its primary purpose is to facilitate status monitoring, configuration, and troubleshooting of IoT devices. Users can leverage this platform to view sensor data, although it's important to note that the data itself is not hosted on the backend (AWS server). Instead, it is stored locally on ESP32 devices. This unique architecture ensures that the AWS server remains lightweight, with computational tasks pushed to the edge of the cloud.
 
-## Available Scripts
+Key Features:
+- Status Monitoring: Keep track of the operational status of IoT devices in real-time.
+- Configuration Management: Easily configure settings and parameters for connected devices.
+- Troubleshooting Tools: Diagnose and address issues with IoT devices efficiently.
+- Data Visualization: View sensor data within the web application interface for insights and analysis.
+- Enterprise Integration: Enterprise users can connect their own data management systems to ESP32 data loggers through this web application, enabling seamless integration and data exchange. Protocol Support:  MQTT, FTPS, and HTTPS.
 
-In the project directory, you can run:
+By leveraging this web application, users can streamline IoT device management processes, enhance data visibility, and ensure efficient operation of their IoT infrastructure.
 
-### `npm start`
+## UI Demo
+### Sensor Mapping
+![Alt Text](docs/images/sensor-settings-1.png)
+### Network Management
+![Alt Text](docs/images/network.png)
+### File Management
+![Alt Text](docs/images/files.png)
+## Components Library
+[Shadcn](https://ui.shadcn.com/) provides a collection of reusable components that can be pasted into JSX. Shadcn support CLI install with Vanilla React, usage can be found here [Usage](https://ui.shadcn.com/docs/cli), run `npx shadcn-ui@latest add [component]` to add components.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Configuration with vanilla React requires a dummy `tsconfig.json` file, and @ alias can be setup using `craco.config.js`. `package.json` should then be updated to use craco when running script:
+```
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject"
+  },
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## REST API
+### Proxy for Development Environment
+One important part of development is to test the api with the backend. However, the backend is most likely also in development on the same machine. This means the react app server and the backend server are on different ports, but the ip address would both the 127.0.0.1 or localhost. If we use `fetch` in react, it would send the request to the react server port, instead of the backend server port. There are multiple ways to resove this, such as adding CORS to the backend, however, using proxy is tested in this project. To set up proxy, add the following into `package.json` in the react app directory. This will ensure the api call be directed to the backend server.
+```
+  // Mac OS
+  "proxy": "http://127.0.0.1:5000",
+  // Windows
+  "proxy": "http://localhost:5000",
+```
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Bundle Size Management
+Use gzip to compress js files and serve on embedded systems. Not that mobile devices seems to download the .gz file and do not decompress it, a workaround is to change the file extension to fool the mobile browser but still send the corresponding header file.
