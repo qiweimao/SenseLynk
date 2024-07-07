@@ -1,5 +1,4 @@
 # SenseLynk UI for ESP32
-![Alt Text](docs/images/Dashboard.png)
 Welcome to the React App for IoT Device Management!
 
 This web application is designed to be hosted on an AWS machine connected to IoT devices, such as Gateways and LoRaWAN Nodes. Its primary purpose is to facilitate status monitoring, configuration, and troubleshooting of IoT devices. Users can leverage this platform to view sensor data, although it's important to note that the data itself is not hosted on the backend (AWS server). Instead, it is stored locally on ESP32 devices. This unique architecture ensures that the AWS server remains lightweight, with computational tasks pushed to the edge of the cloud.
