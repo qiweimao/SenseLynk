@@ -164,7 +164,6 @@ const Sensor = () => {
             <TableHead>Type</TableHead>
             <TableHead>Interval</TableHead>
             <TableHead>Pin</TableHead>
-            <TableHead>Value</TableHead>
             <TableHead>Time</TableHead>
           </TableRow>
         </TableHeader>
@@ -183,7 +182,6 @@ const Sensor = () => {
                 <TableCell className="whitespace-nowrap">{sensorTypes[item.sensor]}</TableCell>
                 <TableCell>{item.interval}</TableCell>
                 <TableCell>{item.pin}</TableCell>
-                <TableCell>{item.value}</TableCell>
                 <TableCell className="whitespace-nowrap">
                   {new Date(item.time).toLocaleString()}
                 </TableCell>
