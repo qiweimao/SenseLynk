@@ -161,6 +161,7 @@ const File = () => {
           <TableRow>
             <TableHead>File Name</TableHead>
             <TableHead>Size</TableHead>
+            <TableHead>Last Modified</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -169,6 +170,7 @@ const File = () => {
               <TableRow key={index} onClick={() => handleRowClick(item)}>
                 <TableCell>{item.filename}</TableCell>
                 <TableCell>{item.size}</TableCell>
+                <TableCell>{item.lastmodified}</TableCell>
               </TableRow>
             ))
           ) : (
