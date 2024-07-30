@@ -100,7 +100,7 @@ const Settings = () => {
 
   const handleSubmit = async (data) => {
     try {
-      const response = await fetch('/api/system-configuration/update?device=gateway', {
+      const response = await fetch(`/api/system-configuration/update?device=${device}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -302,7 +302,7 @@ const Settings = () => {
         <CardHeader>
           <CardTitle>Reboot</CardTitle>
           <CardDescription>Reboot the logger, might lose connection for a moment.</CardDescription>
-          <Button type="button" onClick={handleReboot}>Reboot</Button>
+          <Button type="button" className="bg-red-500" onClick={handleReboot}>Reboot</Button>
         </CardHeader>
         <CardContent className="space-y-2">
         </CardContent>
