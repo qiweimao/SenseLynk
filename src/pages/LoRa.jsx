@@ -84,6 +84,7 @@ const LoRa = () => {
                   <TableHeader>
                     <TableRow>
                       <TableHead>Peer</TableHead>
+                      <TableHead>MAC</TableHead>
                       <TableHead>Time</TableHead>
                       <TableHead>status</TableHead>
                       <TableHead >RSSI</TableHead>
@@ -93,6 +94,7 @@ const LoRa = () => {
                     {LoRaStatus.map((item, index) => (
                       <TableRow key={item.name} onClick={() => handleRowClick(item)}>
                         <TableCell className="whitespace-nowrap">{item.name}</TableCell>
+                        <TableCell className="whitespace-nowrap">{item.mac}</TableCell>
                         <TableCell className="whitespace-nowrap">{item.lastCommsTime}</TableCell>
                         <TableCell className="whitespace-nowrap">{item.status}</TableCell>
                         <TableCell className="whitespace-nowrap">{item.rssi}</TableCell>
