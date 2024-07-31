@@ -14,7 +14,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
 
 const Navbar = () => {
 
@@ -77,6 +84,11 @@ const Navbar = () => {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[200px]">
+            <SheetHeader>
+              <SheetTitle></SheetTitle>
+              <SheetDescription>
+              </SheetDescription>
+            </SheetHeader>
             <nav className="grid gap-6 text-lg font-medium">
               <Link
                 to="/"

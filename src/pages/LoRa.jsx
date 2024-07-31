@@ -23,7 +23,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -117,6 +116,7 @@ const LoRa = () => {
 
       <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
         <DialogContent className="sm:max-w-[425px]">
+        <DialogTitle>Station Info</DialogTitle>
           <DialogHeader>
             <DialogTitle>Station Name: {selectedRow && selectedRow.name}</DialogTitle>
             <DialogDescription>

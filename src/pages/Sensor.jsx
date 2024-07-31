@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback} from 'react'
 import { useLocation } from 'react-router-dom'; // Import useLocation hook
 import { Button } from "@/components/ui/button"
 import { useForm } from "react-hook-form"
@@ -59,7 +59,7 @@ const Sensor = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     fetch(`/api/collection-configuration?device=${device}`)
       .then(response => {
         if (!response.ok) {
@@ -68,18 +68,19 @@ const Sensor = () => {
         return response.json();
       })
       .then(data => {
-        setDataCollectionSettings(data)
+        setDataCollectionSettings(data);
       })
       .catch(error => {
         console.error('There was a problem with the fetch operation for gateway info:', error);
       });
-  }
-
+  }, [device]); // device is a dependency of fetchData
+  
   useEffect(() => {
     fetchData();
-    const intervalId = setInterval(fetchData, 100000);
+    const intervalId = setInterval(fetchData, 100000); // Refresh every 100 seconds
     return () => clearInterval(intervalId);
-  }, [device])
+  }, [fetchData]); // fetchData is now a dependency of useEffect
+  
 
   const handleRowClick = (item) => {
     setSelectedRow(item);

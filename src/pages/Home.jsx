@@ -123,8 +123,8 @@ const Home = () => {
             </Card>
           </DialogTrigger>
           <DialogContent>
-            <DialogHeader>
               <DialogTitle>Battery Voltage</DialogTitle>
+            <DialogHeader>
               <DialogDescription>
                 {/* Make changes to your profile here. Click save when you're done. */}
               </DialogDescription>

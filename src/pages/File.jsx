@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'; // Import useLocation hook
 import { Button } from "@/components/ui/button"
-import { useForm } from "react-hook-form"
 import { Toaster } from "@/components/ui/toaster"
-import { useToast } from "@/components/ui/use-toast"
+import TwoLineChart from "../components/TwoLineChart"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer"
+
 import {
   Table,
   TableBody,
@@ -14,41 +22,7 @@ import {
   TableRow,
   TableFooter,
 } from "@/components/ui/table"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
 
-const sensorTypes = {
-  "0": "Unknown",
-  "1": "VWPZ",
-  "2": "Barometer",
-  "3": "GeoPhone",
-  "4": "Inclinometer",
-  "5": "Rain Gauge"
-};
 
 const File = () => {
   const [FileList, setFileList] = useState([]);
@@ -59,23 +33,24 @@ const File = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const fetchData = () => {
-    fetch(`/api/files?device=${device}`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        setFileList(data)
-      })
-      .catch(error => {
-        console.error('There was a problem with the fetch operation for gateway info:', error);
-      });
-  }
-
   useEffect(() => {
+
+    const fetchData = () => {
+      fetch(`/api/files?device=${device}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          setFileList(data)
+        })
+        .catch(error => {
+          console.error('There was a problem with the fetch operation for gateway info:', error);
+        });
+    }
+
     fetchData();
     const intervalId = setInterval(fetchData, 100000);
     return () => clearInterval(intervalId);
@@ -84,74 +59,47 @@ const File = () => {
   const handleRowClick = (item) => {
     setSelectedRow(item);
     setIsDialogOpen(true);
+    console.log('Row clicked');
+    console.log(isDialogOpen);
   };
-
-  const handleDialogClose = () => {
-    setIsDialogOpen(false);
-    setSelectedRow(null);
-  };
-
-  const form = useForm(
-    {
-      defaultValues: {
-        channel:"",
-        pin:"",
-        sensor:"",
-        enabled:"",
-        interval:"",
-      },
-    }
-  )
-
-  useEffect(() => {
-    if (selectedRow) {
-      form.reset({
-        channel: selectedRow.channel,
-        pin: selectedRow.pin,
-        sensor: selectedRow.sensor,
-        enabled: selectedRow.enabled,
-        interval: selectedRow.interval,
-      });
-    }
-  }, [selectedRow, form]);
-
-  const { toast } = useToast()
-
-  const handleSubmit = async (data) => {
+  
+  const handleButtonClick = async () => {
     try {
-      const response = await fetch(`/api/collection-configuration/update?device=${device}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+      // Trigger the fetch request
+      let request_url="";
+      if(device === "gateway"){
+        request_url = `/downloadhandler~/data/${selectedRow.filename}`
+      }
+      else{
+        request_url = `/downloadhandler~/node/${device}/data/${selectedRow.filename}`
+      }
+      const response = await fetch(request_url, {
+        method: 'GET', // GET request doesn't have a body
       });
   
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
   
-      const text = await response.text();
-      const result = text ? JSON.parse(text) : {};
-      console.log(result);
+      // Handling the file response
+      const blob = await response.blob(); // Process the response as a Blob
+  
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${selectedRow.filename}`; // Provide the name you want for the downloaded file
+      document.body.appendChild(a);
+      a.click(); // Trigger the download
+  
+      // Clean up
+      a.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('There was a problem with the fetch operation:', error);
     }
   };
 
-  function onSubmit(data) {
-    console.log(data);
-    handleSubmit(data);
-    fetchData();
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
-  }
 
   return (
     <div>
@@ -168,9 +116,9 @@ const File = () => {
           {FileList.length > 0 ? (
             FileList.map((item, index) => (
               <TableRow key={index} onClick={() => handleRowClick(item)}>
-                <TableCell>{item.filename}</TableCell>
-                <TableCell>{item.size}</TableCell>
-                <TableCell>{item.lastmodified}</TableCell>
+                <TableCell className="whitespace-nowrap">{item.filename}</TableCell>
+                <TableCell className="whitespace-nowrap">{item.size}</TableCell>
+                <TableCell className="whitespace-nowrap">{item.lastmodified}</TableCell>
               </TableRow>
             ))
           ) : (
@@ -183,20 +131,29 @@ const File = () => {
           <TableRow></TableRow>
         </TableFooter>
       </Table>
+      {/* <TwoLineChart device={device} filename={selectedRow ? selectedRow.filename : null} /> */}
 
-      <Dialog open={isDialogOpen} onOpenChange={handleDialogClose}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>File Info: {selectedRow && selectedRow.filename}</DialogTitle>
-            <DialogDescription>
-              {/* Make changes to channel mappings here. Click save when you're done. */}
-            </DialogDescription>
-          </DialogHeader>
-          {selectedRow && (
-            <p>haha</p>
-          )}
-        </DialogContent>
-      </Dialog>
+      <Drawer open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>File: {selectedRow ? selectedRow.filename : null}</DrawerTitle>
+            <DrawerDescription></DrawerDescription>
+          </DrawerHeader>
+          <div className='mx-[-10px] md:px-10'>
+            <TwoLineChart device={device} filename={selectedRow ? selectedRow.filename : null} />
+          </div>
+          <DrawerFooter>
+            {selectedRow && (
+                <div>
+                    <Button onClick={handleButtonClick}>
+                      Download
+                    </Button>
+                </div>
+              )}
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+
       <Toaster />
     </div>
   )
